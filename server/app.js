@@ -14,7 +14,7 @@ var accessLogStream = rfs('access.log', {
   path: path.join(__dirname, 'log')
 })
 
-app.use(logger('combined', { stream: accessLogStream, skip: function (req, res) { return res.statusCode < 400 } }));
+app.use(logger('combined', { stream: accessLogStream});
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
