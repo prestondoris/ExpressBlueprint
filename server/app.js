@@ -4,19 +4,28 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
+const rfs = require('rotating-file-stream')
 const IndexBlueprint = require('./blueprints/index');
 
 var app = express();
-// view engine setup
-app.set('views', path.join(__dirname + '/views'));
-app.set('view engine', 'ejs');
 
-app.use(logger('dev'));
+var accessLogStream = rfs('access.log', {
+  interval: '1d', // rotate daily
+  path: path.join(__dirname, 'log')
+})
+
+app.use(logger('combined', { stream: accessLogStream, skip: function (req, res) { return res.statusCode < 400 } }));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', IndexBlueprint);
+
+// view engine setup
+app.set('views', path.join(__dirname + '/views'));
+app.set('view engine', 'ejs');
+
+
 
 app.get('/', function (req, res, next) {
   return res.render('index', { title: 'Express' });
