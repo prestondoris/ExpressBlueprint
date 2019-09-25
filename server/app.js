@@ -3,18 +3,13 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const logger = require('morgan');
-const rfs = require('rotating-file-stream')
+const morgan = require('morgan');
+const winston = require('./config/winston');
 const IndexBlueprint = require('./blueprints/index');
 
-var app = express();
+const app = express();
 
-var accessLogStream = rfs('access.log', {
-  interval: '1d', // rotate daily
-  path: path.join(__dirname, 'log')
-})
-
-app.use(logger('combined', { stream: accessLogStream});
+app.use(morgan('combined', { stream: winston.stream }));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -41,6 +36,8 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  winston.error(`${err.status || 500} ${err} - ${req.method} ${req.originalUrl} - ${req.ip}`);
 
   // render the error page
   res.status(err.status || 500);
