@@ -1,3 +1,5 @@
-let middlewareObject = {}
+const gMW = require('../../../globalMiddleware');
 
-module.exports = middlewareObject;
+exports.yourFunction = gMW.yourFunction;
+
+module.exports = exports;
