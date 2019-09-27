@@ -37,4 +37,10 @@ logger.stream = {
   },
 };
 
-module.exports = logger;
+exports.logger = logger;
+
+exports.error = function (req, error) {
+  logger.error(`${500} Internal Server Error: ${error} --- ${req.method} ${req.originalUrl} - ${req.ip}`);
+}
+
+module.exports = exports;

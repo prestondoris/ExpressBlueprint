@@ -9,7 +9,7 @@ const IndexBlueprint = require('./blueprints/index');
 
 const app = express();
 
-app.use(morgan('combined', { stream: winston.stream }));
+app.use(morgan('combined', { stream: winston.logger.stream }));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
